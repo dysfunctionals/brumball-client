@@ -10,15 +10,23 @@
 		font-size: 4em;
 	}
     </style>
+</head>
+<body>
+
+<div id="paddles">
+	<div class="fa fa-chevron-circle-up paddle" data-direction="up" aria-hidden="true"></div>
+	<div class="fa fa-chevron-circle-down paddle" data-direction="down" aria-hidden="true"></div>
+</div>
     <script>
         var colour = "purple";
         var rotation = 0; // User rotation 0 to 360
         var selectedButton = true; // Clockwise True Anticlockwise False
+	var token = "";
 	var pingTimer = 0;
 
         // Ping server from the selected button direction
         function pingServer() {
-		$.get("/ping", function(data){
+		$.get("/api/ping", function(data){
 			if(data == "false"){
 				reRegister();
 			}
@@ -31,22 +39,31 @@
 	}
 
 	function register(){
-		$.get("/connect", function(data){
+		$.get("/api/connect", function(data){
 			rotation = data.rotation;
 			colour = data.colour;
+			token = data.token;
 			$("#paddles").css("transform", "rotate(" + rotation + "deg)");	
         		pingTimer = setInterval(pingServer, 5000);
 		});
 	}
 
+	function sendUpdate(){
+		$.get("/api/inform", {
+			token: token,
+			motion: selectedButton	
+		});
+	}
+
+	$(".paddle").click(function(){
+		$(".paddle").css("color", "");
+		console.log(colour);
+		$(this).css("color", "#" + colour);
+		selectedButton = ($(this).data("direction") == "up");
+		sendUpdate();
+	});
+
 	register();
     </script>
-</head>
-<body>
-
-<div id="paddles">
-	<div class="fa fa-chevron-circle-up paddle" aria-hidden="true"></div>
-	<div class="fa fa-chevron-circle-down paddle" aria-hidden="true"></div>
-</div>
 </body>
 </html>
