@@ -4,9 +4,35 @@
     <meta charset="UTF-8">
     <title>Game Overview</title>
 
-    <script>
-        // Game controller
 
+    <script src="libs/crafty-min.js"></script>
+    <script src="libs/jquery.js"></script>
+
+    <script>
+
+        // Screen Objects
+        // Balls
+        // Paddles
+        // Powerups
+        // Scoreboard
+
+        function init() {
+            Crafty.init('100%', '100%');
+
+
+        }
+
+        function updateScreen() {
+            $.get("/update", function(data) {
+                paddles = data.Paddles;
+                balls = data.Balls;
+                powerUps = data.powerUps;
+
+
+            });
+
+
+        }
     </script>
 </head>
 <body>
