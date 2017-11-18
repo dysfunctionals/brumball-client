@@ -14,19 +14,20 @@
 <body>
 
 <div id="paddles">
-	<div class="fa fa-chevron-circle-up paddle" data-direction="up" aria-hidden="true"></div>
-	<div class="fa fa-chevron-circle-down paddle" data-direction="down" aria-hidden="true"></div>
+	<div class="fa fa-chevron-circle-up paddle" data-direction="1" aria-hidden="true"></div>
+	<div class="fa fa-chevron-circle-down paddle" data-direction="-1" aria-hidden="true"></div>
 </div>
     <script>
+	var path = "http://localhost:8080";
         var colour = "purple";
         var rotation = 0; // User rotation 0 to 360
-        var selectedButton = true; // Clockwise True Anticlockwise False
+        var direction = 0; // Clockwise True Anticlockwise False
 	var token = "";
 	var pingTimer = 0;
 
         // Ping server from the selected button direction
         function pingServer() {
-		$.get("/api/ping", function(data){
+		$.post(path + "/alive", {token: token}, function(data){
 			if(data == "false"){
 				reRegister();
 			}
@@ -39,7 +40,7 @@
 	}
 
 	function register(){
-		$.get("/api/connect", function(data){
+		$.get(path + "/connect", function(data){
 			rotation = data.rotation;
 			colour = data.colour;
 			token = data.token;
@@ -49,9 +50,9 @@
 	}
 
 	function sendUpdate(){
-		$.get("/api/inform", {
+		$.post(path + "/inform", {
 			token: token,
-			motion: selectedButton	
+			motion: direction	
 		});
 	}
 
@@ -59,7 +60,7 @@
 		$(".paddle").css("color", "");
 		console.log(colour);
 		$(this).css("color", "#" + colour);
-		selectedButton = ($(this).data("direction") == "up");
+		direction = parseInt($(this).data("direction"));
 		sendUpdate();
 	});
 
