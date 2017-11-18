@@ -3,39 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <title>User Controller</title>
-
+    <link rel="stylesheet" type="text/css" href="/fa/css/font-awesome.css" />
+    <script src="libs/jquery.js"></script>
+    <style>
+	.paddle{
+		font-size: 4em;
+	}
+    </style>
     <script>
         var colour = "purple";
         var rotation = 0; // User rotation 0 to 360
         var selectedButton = true; // Clockwise True Anticlockwise False
+	var pingTimer = 0;
 
         // Ping server from the selected button direction
         function pingServer() {
-
+		$.get("/ping", function(data){
+			if(data == "false"){
+				reRegister();
+			}
+		});
         }
 
+	function reRegister(){
+		alert("You have now been reallocated to a new team.");
+		register();
+	}
 
+	function register(){
+		$.get("/connect", function(data){
+			rotation = data.rotation;
+			colour = data.colour;
+			$("#paddles").css("transform", "rotate(" + rotation + "deg)");	
+        		pingTimer = setInterval(pingServer, 5000);
+		});
+	}
 
-        //
-        setInterval(pingServer, 5000);
-
+	register();
     </script>
 </head>
 <body>
 
-<div>
-    <!-- left paddle -->
-    <div class="paddle">
-
-    </div>
-    <!-- right paddle -->
-    <div class="paddle">
-
-    </div>
+<div id="paddles">
+	<div class="fa fa-chevron-circle-up paddle" aria-hidden="true"></div>
+	<div class="fa fa-chevron-circle-down paddle" aria-hidden="true"></div>
 </div>
-Left Paddle
-Right Paddle
-
-
 </body>
 </html>
