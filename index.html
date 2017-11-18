@@ -28,7 +28,7 @@
         // Ping server from the selected button direction
         function pingServer() {
 		$.post(path + "/alive", {token: token}, function(data){
-			if(data == "false"){
+			if(data.status == "fail"){
 				reRegister();
 			}
 		});
