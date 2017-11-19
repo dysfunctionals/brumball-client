@@ -23,6 +23,7 @@
 <body>
     <div class="container">
         <h1 class="text-center">BrumBall</h1>
+        <p class="text-center" id="connect-status">This requires javascript!</p>
     </div>
     <div class="container">
         <div class="row">
@@ -41,14 +42,22 @@
     </div>
 
     <script>
-	var path = "/api";
-    var team;
-    var direction = 0; // Clockwise True Anticlockwise False
+    var path = '/api';
+    if(location.href.indexOf('localhost') > -1){
+      path = "http://localhost:8080";
+    }
+
+  var team;
+  var direction = 0; // Clockwise True Anticlockwise False
 	var token;
 	var pingTimer;
 	var heartTime = 5000;
 
 	var teamColours = ['blue', 'red', 'purple', 'green', 'pink', 'orange'];
+
+  $.ajaxSetup({
+    timeout: 1500
+  });
 
     // Ping server from the selected button direction
     function pingServer() {
@@ -59,30 +68,38 @@
 		});
     }
 
+  function lostConnection(){
+      alert("Lost connection :( Attempting reconnection.");
+      register();
+  }
+
 	function reRegister(){
 		alert("You have now been reallocated to a new team.");
 		register();
 	}
 
 	function register(){
+    $('#connect-status').text('Disconnected').css("color","red");
 		$.get(path + "/connect", function(data){
 		    if (data.status == "success") {
+                $('#connect-status').text('Connected').css("color","green");;
                 team = data.paddle;
                 token = data.token;
 
                 $(".paddle").css("transform", "rotate(" + -60*team + "deg)");
                 pingTimer = setInterval(pingServer, heartTime);
-            } else {
+        }else {
 		        reRegister();
-            }
+        }
 		});
 	}
 
 	function sendUpdate(){
 		$.post(path + "/inform", {
 			token: token,
-			motion: direction
-		});
+			motion: direction,
+      timeout: 1500
+		}).fail(lostConnection);
 	}
 
 	$(".paddle").click(function(){
