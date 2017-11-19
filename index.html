@@ -24,6 +24,7 @@
     var direction = 0; // Clockwise True Anticlockwise False
 	var token;
 	var pingTimer;
+	var heartTime = 5000;
 
 	var teamColours = ['blue', 'red', 'purple', 'green', 'pink', 'orange'];
 
@@ -48,7 +49,7 @@
                 token = data.token;
 
                 $("#paddles").css("transform", "rotate(" + rotation*team + "deg)");
-                pingTimer = setInterval(pingServer, 5000);
+                pingTimer = setInterval(pingServer, heartTime);
             } else {
 		        reRegister();
             }
