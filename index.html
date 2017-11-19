@@ -56,7 +56,7 @@
 	var teamColours = ['blue', 'red', 'purple', 'green', 'pink', 'orange'];
 
   $.ajaxSetup({
-    timeout: 1500
+    timeout: 15000
   });
 
     // Ping server from the selected button direction
@@ -110,8 +110,7 @@
 	function sendUpdate(){
 		$.post(path + "/inform", {
 			token: token,
-			motion: direction,
-      timeout: 1500
+			motion: direction
 		}).fail(lostConnection);
 	}
 
